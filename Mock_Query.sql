@@ -1,4 +1,4 @@
-— Purpose mock query to show each SQL functions in relation to MSSQL Server syntax and order
+-— Purpose mock query to show each SQL functions in relation to MSSQL Server syntax and order
 
 -- SELECT Clause Functions
 SELECT
