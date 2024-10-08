@@ -2,7 +2,7 @@
 # SQL Island
 Fun game to cover common SQL techniques
 
-## Usage/Examples
+## Source Code for the Game at <a>https://sql-island.informatik.uni-kl.de/</a>
 
 ```SQL
 SELECT * FROM inhabitant;
