@@ -2,7 +2,7 @@
 # SQL Island
 Fun game to cover common SQL techniques
 
-## Source Code for the Game: 
+## Source Code Solutions for the Game: 
 
 <a>https://sql-island.informatik.uni-kl.de/</a>
 
