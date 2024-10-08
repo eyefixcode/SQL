@@ -1,4 +1,7 @@
 
+# SQL Island
+Fun game to cover common SQL techniques
+
 ## Usage/Examples
 
 ```SQL
