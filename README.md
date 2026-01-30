@@ -1,58 +1,248 @@
+<h1>SQL Order of Operations — Reference Guide</h1>
 
-<h1>SQL Order of Operations README</h1>
+<p>
+<strong>James Settles</strong><br>
+Health Informatics & Data Analytics<br>
+<a href="https://www.linkedin.com/in/james-settles/" target="_blank">LinkedIn</a>
+</p>
 
-<h2>Overview</h2>
+<hr>
 
-<p>This README provides a simplified guide to understanding the order of operations in SQL queries, covering essential components and their sequence within a typical SQL query.</p>
+<h2>Purpose</h2>
 
-<h2>Basic Structure</h2>
+<p>
+This document serves as a concise reference for core SQL components, logical execution order,
+and commonly used query patterns.
+</p>
 
-<p>A standard SQL query consists of several clauses that are typically arranged in the following order:</p>
+<p>
+It is intended for learning, review, and day-to-day query design across analytical and production environments.
+</p>
 
-<ul>
-    <li><strong>SELECT:</strong> Determines the columns to be retrieved from the database.</li>
-    <li><strong>FROM:</strong> Specifies the table or tables from which to retrieve data.</li>
-    <li><strong>JOIN:</strong> Combines rows from different tables based on a related column.</li>
-    <li><strong>WHERE:</strong> Filters the rows based on specified conditions.</li>
-    <li><strong>GROUP BY:</strong> Groups rows based on the values in one or more columns.</li>
-    <li><strong>HAVING:</strong> Filters grouped results based on aggregate conditions.</li>
-    <li><strong>ORDER BY:</strong> Sorts the result set based on specified columns and sort orders.</li>
-</ul>
+---
+
+<h2>Logical Order of Operations</h2>
+
+<p>
+Although SQL queries are written in a specific syntax order, they are evaluated by the database
+engine in the following logical sequence:
+</p>
+
+<ol>
+    <li><strong>FROM</strong></li>
+    <li><strong>JOIN</strong></li>
+    <li><strong>ON</strong></li>
+    <li><strong>WHERE</strong></li>
+    <li><strong>GROUP BY</strong></li>
+    <li><strong>HAVING</strong></li>
+    <li><strong>SELECT</strong></li>
+    <li><strong>ORDER BY</strong></li>
+</ol>
+
+---
+
+<h2>JOINs & Set Operations</h2>
+
+<h3>INNER JOIN</h3>
+<p>Returns rows with matches in both tables.</p>
+
+<pre><code>
+SELECT *
+FROM orders o
+INNER JOIN customers c
+    ON o.customer_id = c.customer_id;
+</code></pre>
+
+<h3>LEFT (OUTER) JOIN</h3>
+<p>Returns all rows from the left table and matching rows from the right.</p>
+
+<pre><code>
+SELECT *
+FROM customers c
+LEFT JOIN orders o
+    ON c.customer_id = o.customer_id;
+</code></pre>
+
+<h3>RIGHT (OUTER) JOIN</h3>
+<p>Returns all rows from the right table and matching rows from the left.</p>
+
+<h3>FULL (OUTER) JOIN</h3>
+<p>Returns all rows from both tables, matching where possible.</p>
+
+<h3>CROSS JOIN</h3>
+<p>Returns the Cartesian product of both tables.</p>
+
+<h3>SELF JOIN</h3>
+<p>Joins a table to itself using aliases.</p>
+
+<pre><code>
+SELECT e.name, m.name AS manager
+FROM employees e
+LEFT JOIN employees m
+    ON e.manager_id = m.employee_id;
+</code></pre>
+
+---
+
+<h2>UNION & UNION ALL</h2>
+
+<p>
+UNIONs combine the results of multiple SELECT statements.
+</p>
+
+<h3>UNION</h3>
+<p>Removes duplicate rows.</p>
+
+<pre><code>
+SELECT email FROM customers
+UNION
+SELECT email FROM leads;
+</code></pre>
+
+<h3>UNION ALL</h3>
+<p>Preserves duplicates.</p>
+
+<pre><code>
+SELECT email FROM customers
+UNION ALL
+SELECT email FROM leads;
+</code></pre>
+
+---
+
+<h2>Aliases</h2>
+
+<p>
+Aliases improve readability and are required in some cases (e.g., self-joins).
+</p>
+
+<pre><code>
+SELECT
+    c.customer_name,
+    o.order_date
+FROM customers AS c
+JOIN orders AS o
+    ON c.customer_id = o.customer_id;
+</code></pre>
+
+---
+
+<h2>Subqueries</h2>
+
+<p>
+Subqueries are queries nested inside another query. They can appear in SELECT, FROM, or WHERE clauses.
+</p>
+
+<h3>Subquery in WHERE</h3>
+
+<pre><code>
+SELECT *
+FROM orders
+WHERE customer_id IN (
+    SELECT customer_id
+    FROM customers
+    WHERE active = 1
+);
+</code></pre>
+
+<h3>Subquery in FROM</h3>
+
+<pre><code>
+SELECT avg_order_value
+FROM (
+    SELECT AVG(total) AS avg_order_value
+    FROM orders
+) t;
+</code></pre>
+
+---
+
+<h2>Common Table Expressions (CTEs)</h2>
+
+<p>
+CTEs improve readability and are often preferred over deeply nested subqueries.
+</p>
+
+<pre><code>
+WITH active_customers AS (
+    SELECT customer_id
+    FROM customers
+    WHERE active = 1
+)
+SELECT *
+FROM orders
+WHERE customer_id IN (SELECT customer_id FROM active_customers);
+</code></pre>
+
+---
+
+<h2>Stored Procedures</h2>
+
+<p>
+Stored procedures encapsulate reusable logic that can accept parameters and execute multiple statements.
+</p>
+
+<pre><code>
+CREATE PROCEDURE GetCustomerOrders
+    @CustomerID INT
+AS
+BEGIN
+    SELECT *
+    FROM orders
+    WHERE customer_id = @CustomerID;
+END;
+</code></pre>
+
+---
+
+<h2>Aggregation</h2>
+
+<h3>GROUP BY</h3>
+<p>Groups rows for aggregate calculations.</p>
+
+<h3>HAVING</h3>
+<p>Filters aggregated results.</p>
+
+<pre><code>
+SELECT customer_id, COUNT(*) AS order_count
+FROM orders
+GROUP BY customer_id
+HAVING COUNT(*) > 5;
+</code></pre>
+
+---
 
 <h2>Example Query</h2>
 
-<p>Here's a simple example to illustrate the order of operations:</p>
-    <pre>
-        <code>
+<pre><code>
 SELECT
-    column1,
-    column2
-FROM
-    your_table
-WHERE
-    condition_column = 'some_value'
-GROUP BY
-    grouping_column
-HAVING
-    COUNT(*) > 1
-ORDER BY
-    column1 DESC;
-        </code>
-    </pre>
+    c.customer_name,
+    COUNT(o.order_id) AS order_count
+FROM customers c
+LEFT JOIN orders o
+    ON c.customer_id = o.customer_id
+WHERE c.active = 1
+GROUP BY c.customer_name
+HAVING COUNT(o.order_id) > 1
+ORDER BY order_count DESC;
+</code></pre>
 
+---
 
-<p>In this example, the clauses are arranged in the standard order. Adjust the column and table names based on your specific database schema.</p>
-
-<h2>Notes</h2>
+<h2>Notes & Best Practices</h2>
 
 <ul>
-    <li><strong>Joins:</strong> If multiple tables are involved, the <code>JOIN</code> clause precedes the <code>WHERE</code> clause.</li>
-    <li><strong>Aggregation:</strong> Aggregate functions like <code>COUNT</code>, <code>SUM</code>, etc., are often used with <code>GROUP BY</code> and <code>HAVING</code>.</li>
-    <li><strong>Sorting:</strong> Sorting with <code>ORDER BY</code> is performed after filtering and grouping.</li>
+    <li>JOIN conditions belong in <code>ON</code>; filters belong in <code>WHERE</code>.</li>
+    <li>Filtering on the right table of a LEFT JOIN in <code>WHERE</code> can change results.</li>
+    <li>Use CTEs for clarity when queries become complex.</li>
+    <li>Prefer UNION ALL when duplicates are acceptable for performance.</li>
 </ul>
 
-<h2>Conclusion</h2>
+---
 
-<p>Understanding the order of operations in SQL queries is crucial for constructing accurate and efficient database queries. Following this standard structure will help organize your queries and make them more readable.</p>
+<h2>Closing</h2>
 
-<p>For detailed information on SQL syntax and functions, refer to the official documentation of your specific database management system (e.g., MySQL, PostgreSQL, Microsoft SQL Server).</p>
+<p>
+This guide is intended as a practical SQL reference covering core components and execution behavior.
+It can be used for learning, review, and explaining query logic clearly and consistently.
+</p>
