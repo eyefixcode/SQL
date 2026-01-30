@@ -65,12 +65,29 @@ LEFT JOIN orders o
 
 <h3>RIGHT (OUTER) JOIN</h3>
 <p>Returns all rows from the right table and matching rows from the left.</p>
+<pre><code>
+SELECT *
+FROM orders o
+RIGHT JOIN customers c
+    ON o.customer_id = c.customer_id;
+</code></pre>
 
 <h3>FULL (OUTER) JOIN</h3>
 <p>Returns all rows from both tables, matching where possible.</p>
+<pre><code>
+SELECT *
+FROM customers c
+FULL OUTER JOIN orders o
+    ON c.customer_id = o.customer_id;
+</code></pre>
 
 <h3>CROSS JOIN</h3>
 <p>Returns the Cartesian product of both tables.</p>
+<pre><code>
+SELECT *
+FROM products
+CROSS JOIN regions;
+</code></pre>
 
 <h3>SELF JOIN</h3>
 <p>Joins a table to itself using aliases.</p>
