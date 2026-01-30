@@ -1,11 +1,5 @@
 <h1>SQL Order of Operations — Reference Guide</h1>
 
-<p>
-<strong>James Settles</strong><br>
-Health Informatics & Data Analytics<br>
-<a href="https://www.linkedin.com/in/james-settles/" target="_blank">LinkedIn</a>
-</p>
-
 <hr>
 
 <h2>Purpose</h2>
@@ -262,4 +256,10 @@ ORDER BY order_count DESC;
 <p>
 This guide is intended as a practical SQL reference covering core components and execution behavior.
 It can be used for learning, review, and explaining query logic clearly and consistently.
+</p>
+
+<p>
+<strong>James Settles</strong><br>
+Health Informatics & Data Analytics<br>
+<a href="https://www.linkedin.com/in/james-settles/" target="_blank">LinkedIn</a>
 </p>
